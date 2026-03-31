@@ -1,6 +1,7 @@
 // Module : hdmi_top
 // Author : Snevin Leoneel Dsouza
 // Warning: This file is encrypted. Do not modify this file
+// Recommended vivado versions: 2024.1 to 2029.1
 `default_nettype none
 module hdmi_top(
   input   wire        clk,
