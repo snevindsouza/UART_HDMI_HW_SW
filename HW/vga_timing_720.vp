@@ -1,3 +1,7 @@
+// Module : vga_timing_720
+// Author : Snevin Leoneel Dsouza
+// Warning: This file is encrypted. Do not modify this file
+// Recommended vivado versions: 2024.1 to 2029.1
 `pragma protect begin_protected
 `pragma protect version=2
 `pragma protect encrypt_agent="ipecrypt"
