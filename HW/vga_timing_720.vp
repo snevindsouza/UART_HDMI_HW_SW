@@ -4,8 +4,6 @@
 // Recommended vivado versions: 2024.1 to 2029.1
 `pragma protect begin_protected
 `pragma protect version=2
-`pragma protect encrypt_agent="ipecrypt"
-`pragma protect encrypt_agent_info="IP Encrypter LLC, http://ipencrypter.com, Version: 23.7.0"
 `pragma protect author="Snevin Leoneel Dsouza"
 `pragma protect data_method="aes128-cbc"
 `pragma protect begin_commonblock
