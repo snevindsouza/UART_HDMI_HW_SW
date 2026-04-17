@@ -12,23 +12,35 @@ module hdmi_top(
   output  wire  [2:0] hdmi_tx_n,
   output  wire  [2:0] hdmi_tx_p
 );
-
-wire        clk_74_25MHz, clk_371_25MHz;
-wire        locked;
-wire        hsync, vsync, vde, vga_hsync, vga_vsync;
-wire  [7:0] red, green, blue;
-wire  [$clog2(1650)-1:0] vga_col;
-wire  [$clog2(750)-1:0]  vga_row;
-
+// VGA timing parameters
+localparam  HVID = 1280;   // horizontal active video width pix clocks
+localparam  HFP  = 110;    // horizontal front porch pix clocks
+localparam  HS   = 40;     // horizontal hsync pulse width pix clocks
+localparam  HBP  = 220;    // horizontal back porch pix clocks
+localparam  VVID = 720;    // vertical active video lines
+localparam  VFP  = 5;      // vertical front porch video lines
+localparam  VS   = 5;      // vertical vsync pulse width video lines
+localparam  VBP  = 20;     // vertical back porch video lines
+// extra helping parameters
+localparam  HC_MAX  = HVID+HFP+HS+HBP;  // one more than the max horizontal count value
+localparam  VC_MAX  = VVID+VFP+VS+VBP;  // one more than the max vertical count value
+localparam  HC_BITS = $clog2(HC_MAX);   // how many bits do we need to count this high?
+localparam  VC_BITS = $clog2(VC_MAX);   // how many bits do we need to count this high?
+wire                clk_74_25MHz, clk_371_25MHz;  // pixel clocks
+wire                locked;
+wire                hsync, vsync, vde; 
+wire                vga_hsync, vga_vsync;
+wire  [7:0]         red, green, blue;
+wire  [HC_BITS-1:0] vga_col;
+wire  [VC_BITS-1:0] vga_row;
 //clock wizard configured with a 1x and 5x clock
 clk_wiz_0 clk_wiz (
-  .clk_out1 (clk_74_25MHz),
-  .clk_out2 (clk_371_25MHz),
+  .clk_out1 (clk_74_25MHz),   // 74.25MHz
+  .clk_out2 (clk_371_25MHz),  // 371.25MHz
   .reset    (rst),
   .locked   (locked),
   .clk_in1  (clk)
 );
-
 //Real Digital VGA to HDMI converter
 hdmi_tx_0 vga_to_hdmi (
   //Clocking and Reset
@@ -55,7 +67,6 @@ hdmi_tx_0 vga_to_hdmi (
   .TMDS_DATA_P    (hdmi_tx_p),         
   .TMDS_DATA_N    (hdmi_tx_n)          
 );
-
 `pragma protect begin_protected
 `pragma protect version=2
 `pragma protect author="Snevin Leoneel Dsouza"
@@ -74,30 +85,34 @@ hdmi_tx_0 vga_to_hdmi (
 `pragma protect control xilinx_enable_probing="false"
 `pragma protect control decryption=(xilinx_activity==simulation)? "false" : "true"
 `pragma protect key_block
-LAeZO5vARkH6bqtw1gNzUAmkosFNFyOQsVIrQ1HdlmpFQ0l0hUUeGYAegBKe1D2c
-vX1iJKzHzhMXhbwE7L3wCSZZHjE/DTXXHynbrqiPw2FLjLwKCiP3Z8fYW0z0LGsF
-n2JNaiS6d53VAxufZz+fA+gWKhu5dYdYhqiP7E0SUNDw4/EVyENewfTJuwe4E8p3
-AM5rWHAUwTiY9WZrz4gVD6zROLQmQPMCwOFn49YENwUwvb6gyV0vfrZp9B3CBHOo
-YM3hlHYsD21sPe3mmFrkmQVGAey9znDN8PxhLwR7jLf6FKlVzgzQLgxLMhewl6pD
-1E/puxwPduBbsTOH9d8R8w==
-`pragma protect end_toolblock="m1X7w1C+9FDgWL/1FbDBgx7dID8ubm/PfdM+QHPoGys="
+HYuEEWTHztK11+AmoXcqfZKdDPgdKyQfQKeOZ3TCzCdhRjrcoJNh7tNkIqF9OlVi
+Jf5duWd0EznWwO+7MNRLESfhmdmcki3J1yufMk55fHU50o1QTaCgMnDNSvX+IN4Z
+cHQk2+vlhvxNWkLFSaSZ3Kl2tMxyTU7MdVJ1IUdWx/V7LkDfAsx7P8/Nd7fpRmHy
+hzn3pw/U/yx3s0tmTs/iM+yXXLGYtJKisRlqSxyGdGk+aQtLvZkCGCRFhtoLXwCS
+Z5hjABydSzEMUeB21QAmr/EGgbgsJO176bbPffwBByAHJc8bFeweAlFlz18RwTA+
+eNPXNilJEPn/+dGw6OaYow==
+`pragma protect end_toolblock="95FEfIhZlXSOqAgE7z5HAtOtoRXo2Tifwzw19CHi3fc="
 `pragma protect data_block
-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
+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
 `pragma protect end_protected
-
 endmodule 
